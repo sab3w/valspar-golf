@@ -1,0 +1,659 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Valspar Fantasy Golf 2026</title>
+<link href="https://fonts.googleapis.com/css2?family=Playfair+Display:wght@700;900&family=DM+Mono:wght@400;500&family=DM+Sans:wght@400;600&display=swap" rel="stylesheet">
+<style>
+:root{--gd:#152415;--gm:#23412a;--gl:#6bbf72;--gold:#c9a84c;--goldl:#e8c97a;--cream:#f4efe6;--creamd:#c8bfa8;--red:#c0392b;}
+*{margin:0;padding:0;box-sizing:border-box;}
+body{font-family:'DM Sans',sans-serif;background:var(--gd);color:var(--cream);min-height:100vh;overflow-x:hidden;}
+body::before{content:'';position:fixed;inset:0;pointer-events:none;z-index:0;background:repeating-linear-gradient(170deg,transparent 0,transparent 60px,rgba(255,255,255,.012) 60px,rgba(255,255,255,.012) 120px);}
+
+/* SPLASH */
+#splash{position:fixed;inset:0;z-index:200;display:flex;flex-direction:column;align-items:center;justify-content:center;gap:16px;background:var(--gd);transition:opacity .55s,transform .55s;}
+#splash.out{opacity:0;transform:scale(1.05);pointer-events:none;}
+#splash-wrap{position:relative;width:260px;height:360px;border-radius:14px;border:2px solid var(--gold);box-shadow:0 24px 64px rgba(0,0,0,.65);overflow:hidden;animation:rise .65s cubic-bezier(.16,1,.3,1) both;}
+#splash-img{width:100%;height:100%;object-fit:cover;object-position:top center;display:block;}
+#splash-fallback{display:none;width:100%;height:100%;background:linear-gradient(160deg,#3d1a5c,#1a0a2e);align-items:center;justify-content:center;flex-direction:column;gap:12px;}
+#splash-fallback-name{font-family:'Playfair Display',serif;font-size:1.4rem;color:var(--gold);text-align:center;padding:0 16px;}
+#splash h2{font-family:'Playfair Display',serif;font-size:1.9rem;font-weight:900;color:var(--gold);animation:rise .65s .1s cubic-bezier(.16,1,.3,1) both;}
+#splash p{font-family:'DM Mono',monospace;font-size:.7rem;letter-spacing:.18em;text-transform:uppercase;color:var(--gl);animation:rise .65s .18s cubic-bezier(.16,1,.3,1) both;}
+#enter-btn{padding:13px 40px;background:var(--gold);color:var(--gd);border:none;border-radius:5px;font-family:'DM Mono',monospace;font-size:.8rem;font-weight:500;letter-spacing:.1em;text-transform:uppercase;cursor:pointer;transition:background .2s,transform .15s;animation:rise .65s .26s cubic-bezier(.16,1,.3,1) both;}
+#enter-btn:hover{background:var(--goldl);transform:translateY(-2px);}
+@keyframes rise{from{opacity:0;transform:translateY(20px);}to{opacity:1;transform:translateY(0);}}
+
+/* DOWNLOAD BANNER */
+#download-banner{
+  position:relative;z-index:2;
+  background:linear-gradient(135deg,rgba(201,168,76,.15),rgba(201,168,76,.05));
+  border-bottom:1px solid rgba(201,168,76,.3);
+  padding:12px 20px;
+  display:flex;align-items:center;justify-content:center;gap:14px;flex-wrap:wrap;
+  font-family:'DM Mono',monospace;font-size:.75rem;color:var(--cream);
+  text-align:center;
+}
+#download-banner.hidden{display:none;}
+.banner-text{color:var(--creamd);}
+.banner-text strong{color:var(--gold);}
+.dl-btn{
+  background:var(--gold);color:var(--gd);border:none;
+  padding:7px 16px;border-radius:4px;font-family:'DM Mono',monospace;
+  font-size:.72rem;font-weight:500;letter-spacing:.06em;cursor:pointer;
+  transition:background .2s;white-space:nowrap;text-decoration:none;display:inline-block;
+}
+.dl-btn:hover{background:var(--goldl);}
+.banner-close{background:none;border:none;color:var(--creamd);cursor:pointer;font-size:1rem;padding:2px 8px;opacity:.5;margin-left:4px;}
+.banner-close:hover{opacity:1;}
+
+/* APP */
+#app{position:relative;z-index:1;max-width:880px;margin:0 auto;padding:32px 18px 72px;}
+header{text-align:center;margin-bottom:34px;}
+.eyebrow{font-family:'DM Mono',monospace;font-size:.68rem;letter-spacing:.2em;text-transform:uppercase;color:var(--gl);margin-bottom:10px;}
+header h1{font-family:'Playfair Display',serif;font-size:clamp(1.9rem,5vw,3rem);font-weight:900;color:var(--gold);line-height:1.06;}
+.sub{font-size:.82rem;color:var(--creamd);margin-top:7px;opacity:.75;}
+.card{background:rgba(255,255,255,.042);border:1px solid rgba(201,168,76,.18);border-radius:14px;padding:26px;margin-bottom:24px;backdrop-filter:blur(6px);}
+.card-title{font-family:'Playfair Display',serif;font-size:1.1rem;color:var(--gold);margin-bottom:18px;display:flex;align-items:center;gap:10px;}
+.card-title::after{content:'';flex:1;height:1px;background:linear-gradient(90deg,rgba(201,168,76,.35),transparent);}
+#status-row{display:flex;align-items:center;gap:10px;flex-wrap:wrap;margin-bottom:22px;}
+.chip{display:flex;align-items:center;gap:6px;padding:5px 13px;background:rgba(255,255,255,.06);border:1px solid rgba(201,168,76,.2);border-radius:20px;font-family:'DM Mono',monospace;font-size:.72rem;color:var(--creamd);}
+.pulse{width:7px;height:7px;border-radius:50%;background:var(--gl);animation:blink 2s infinite;}
+@keyframes blink{0%,100%{opacity:1;}50%{opacity:.2;}}
+#refresh-btn{background:transparent;border:1px solid var(--gold);color:var(--gold);padding:5px 15px;border-radius:20px;font-family:'DM Mono',monospace;font-size:.72rem;cursor:pointer;letter-spacing:.05em;transition:all .2s;}
+#refresh-btn:hover{background:var(--gold);color:var(--gd);}
+#refresh-btn:disabled{opacity:.35;cursor:wait;}
+#scorecard{display:grid;gap:10px;}
+.pick-row{display:flex;align-items:center;background:rgba(255,255,255,.04);border:1px solid rgba(255,255,255,.07);border-radius:9px;overflow:hidden;}
+.pick-row.counting{border-color:rgba(107,191,114,.3);}
+.pick-row.benched{opacity:.55;}
+.pick-row.missed{border-color:rgba(192,57,43,.35);background:rgba(192,57,43,.07);}
+.pick-pos{font-family:'DM Mono',monospace;font-size:.7rem;color:var(--creamd);width:46px;text-align:center;padding:14px 0;border-right:1px solid rgba(255,255,255,.07);flex-shrink:0;}
+.pick-name{font-size:.92rem;font-weight:600;padding:14px 16px;flex:1;}
+.pick-badge{font-family:'DM Mono',monospace;font-size:.6rem;padding:3px 8px;border-radius:3px;margin-right:6px;flex-shrink:0;}
+.b-counting{background:rgba(107,191,114,.2);color:var(--gl);border:1px solid rgba(107,191,114,.3);}
+.b-bench{background:rgba(255,255,255,.08);color:var(--creamd);}
+.b-mc{background:rgba(192,57,43,.25);color:#e08070;border:1px solid rgba(192,57,43,.3);}
+.pick-score{font-family:'DM Mono',monospace;font-size:1.3rem;font-weight:500;padding:14px 18px;text-align:right;min-width:72px;flex-shrink:0;}
+#total-bar{display:flex;align-items:center;justify-content:space-between;background:linear-gradient(135deg,rgba(201,168,76,.12),rgba(201,168,76,.04));border:1px solid rgba(201,168,76,.35);border-radius:10px;padding:18px 22px;margin-top:12px;}
+#total-score{font-family:'DM Mono',monospace;font-size:2rem;font-weight:500;}
+#total-lbl{font-family:'Playfair Display',serif;font-size:1rem;color:var(--gold);}
+#total-note{font-family:'DM Mono',monospace;font-size:.7rem;color:var(--creamd);margin-top:3px;}
+.form-name-row{margin-bottom:14px;}
+.picks-grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(185px,1fr));gap:10px;margin-bottom:18px;}
+.fg{display:flex;flex-direction:column;gap:5px;}
+.fg label{font-family:'DM Mono',monospace;font-size:.65rem;letter-spacing:.1em;text-transform:uppercase;color:var(--gl);}
+.fg input,.fg select{background:rgba(255,255,255,.06);border:1px solid rgba(201,168,76,.22);border-radius:7px;color:var(--cream);font-family:'DM Sans',sans-serif;font-size:.88rem;padding:10px 12px;outline:none;transition:border-color .2s;-webkit-appearance:none;width:100%;}
+.fg input::placeholder{color:rgba(255,255,255,.3);}
+.fg input:focus,.fg select:focus{border-color:var(--gold);}
+.fg select option{background:#1a3020;}
+.btn-gold{background:var(--gold);color:var(--gd);border:none;padding:12px 30px;border-radius:6px;font-family:'DM Mono',monospace;font-size:.78rem;font-weight:500;letter-spacing:.08em;text-transform:uppercase;cursor:pointer;transition:background .2s,transform .15s;}
+.btn-gold:hover{background:var(--goldl);transform:translateY(-1px);}
+.btn-ghost{background:transparent;color:var(--creamd);border:1px solid rgba(255,255,255,.15);padding:11px 22px;border-radius:6px;font-family:'DM Mono',monospace;font-size:.75rem;cursor:pointer;transition:all .2s;margin-left:10px;}
+.btn-ghost:hover{border-color:var(--gold);color:var(--gold);}
+#field-table{width:100%;border-collapse:collapse;font-family:'DM Mono',monospace;font-size:.8rem;}
+#field-table th{font-size:.62rem;letter-spacing:.12em;text-transform:uppercase;color:var(--gold);padding:7px 10px;border-bottom:1px solid rgba(201,168,76,.2);text-align:left;}
+#field-table td{padding:8px 10px;border-bottom:1px solid rgba(255,255,255,.04);}
+#field-table tr:hover td{background:rgba(255,255,255,.025);}
+#field-table tr.my-pick td{background:rgba(201,168,76,.06);}
+#field-table tr.my-pick td:first-child{border-left:2px solid var(--gold);}
+.mc-tag{font-size:.58rem;padding:1px 6px;background:rgba(192,57,43,.3);color:#e08070;border-radius:3px;}
+.ns-tag{font-size:.58rem;padding:1px 6px;background:rgba(255,255,255,.07);color:var(--creamd);border-radius:3px;}
+.under{color:#e05555;}.over{color:#6bbf72;}.even{color:var(--cream);}
+.spin{display:inline-block;width:12px;height:12px;border:2px solid rgba(201,168,76,.25);border-top-color:var(--gold);border-radius:50%;animation:sp .7s linear infinite;vertical-align:middle;margin-right:5px;}
+@keyframes sp{to{transform:rotate(360deg);}}
+#toast{position:fixed;bottom:24px;left:50%;transform:translateX(-50%) translateY(70px);background:var(--gm);border:1px solid var(--gold);color:var(--cream);padding:11px 22px;border-radius:8px;font-family:'DM Mono',monospace;font-size:.78rem;transition:transform .35s cubic-bezier(.34,1.56,.64,1);z-index:300;white-space:nowrap;}
+#toast.show{transform:translateX(-50%) translateY(0);}
+</style>
+</head>
+<body>
+<!-- BANNER: visible inside claude.ai (CSP blocks fetch); hidden automatically when deployed -->
+<div id="download-banner">
+  <span class="banner-text">⚡ <strong>Deploy once for live scores.</strong> Download this file, then host free on GitHub Pages — everyone gets a permanent link with auto-updating scores.</span>
+  <button class="dl-btn" onclick="showInstructions()">📋 How to Deploy (3 steps)</button>
+  <a id="dl-link" class="dl-btn" href="#" download="index.html" style="background:rgba(201,168,76,.5)">⬇ Download</a>
+  <button class="banner-close" onclick="document.getElementById('download-banner').classList.add('hidden')">✕</button>
+</div>
+
+<!-- DEPLOY MODAL -->
+<div id="deploy-modal" style="display:none;position:fixed;inset:0;z-index:500;background:rgba(0,0,0,.8);align-items:center;justify-content:center;padding:20px;">
+  <div style="background:#1a2e1a;border:1px solid #c9a84c;border-radius:14px;max-width:560px;width:100%;padding:32px;position:relative;max-height:90vh;overflow-y:auto;">
+    <button onclick="document.getElementById('deploy-modal').style.display='none'" style="position:absolute;top:14px;right:16px;background:none;border:none;color:#c8bfa8;font-size:1.3rem;cursor:pointer;">✕</button>
+    <div style="font-family:Georgia,serif;font-size:1.3rem;color:#c9a84c;margin-bottom:20px;">🚀 Get Live Scores — Deploy in 3 Steps</div>
+    <div style="font-family:monospace;font-size:.82rem;color:#f4efe6;line-height:2;">
+      <div style="margin-bottom:18px;">
+        <div style="color:#c9a84c;font-size:.9rem;margin-bottom:5px;">① Download the file</div>
+        <div style="color:#c8bfa8;">Click <strong style="color:#f4efe6;">⬇ Download</strong> above to save <code style="background:rgba(255,255,255,.1);padding:2px 6px;border-radius:3px;">index.html</code> to your computer.</div>
+      </div>
+      <div style="margin-bottom:18px;">
+        <div style="color:#c9a84c;font-size:.9rem;margin-bottom:5px;">② Put it on GitHub (free)</div>
+        <div style="color:#c8bfa8;">
+          • Go to <strong style="color:#f4efe6;">github.com</strong> → Sign up free (if needed)<br>
+          • Click <strong style="color:#f4efe6;">+ New repository</strong> → name it e.g. <code style="background:rgba(255,255,255,.1);padding:2px 5px;border-radius:3px;">valspar-golf</code><br>
+          • Check <strong style="color:#f4efe6;">"Add a README"</strong> → Create repository<br>
+          • Click <strong style="color:#f4efe6;">Add file → Upload files</strong> → drag in your <code style="background:rgba(255,255,255,.1);padding:2px 5px;border-radius:3px;">index.html</code> → Commit changes
+        </div>
+      </div>
+      <div style="margin-bottom:24px;">
+        <div style="color:#c9a84c;font-size:.9rem;margin-bottom:5px;">③ Enable GitHub Pages</div>
+        <div style="color:#c8bfa8;">
+          • In your repo: <strong style="color:#f4efe6;">Settings → Pages</strong><br>
+          • Under Source: <strong style="color:#f4efe6;">Deploy from a branch → main → / (root) → Save</strong><br>
+          • Wait ~1 minute — your app is live at:<br>
+          <code style="background:rgba(201,168,76,.15);border:1px solid rgba(201,168,76,.3);padding:5px 10px;border-radius:5px;display:inline-block;margin-top:6px;color:#c9a84c;">https://YOUR-USERNAME.github.io/valspar-golf</code>
+        </div>
+      </div>
+      <div style="background:rgba(201,168,76,.08);border:1px solid rgba(201,168,76,.2);border-radius:8px;padding:14px;color:#c8bfa8;line-height:1.7;">
+        ✓ <strong style="color:#f4efe6;">Free forever</strong> &nbsp;·&nbsp; ✓ <strong style="color:#f4efe6;">Scores auto-update</strong> on every visit &nbsp;·&nbsp; ✓ <strong style="color:#f4efe6;">Share the URL</strong> with anyone<br>
+        ✓ No server needed &nbsp;·&nbsp; ✓ Works on phone &amp; desktop
+      </div>
+      <div style="text-align:center;margin-top:20px;">
+        <button onclick="document.getElementById('deploy-modal').style.display='none'" style="background:#c9a84c;color:#152415;border:none;padding:11px 28px;border-radius:6px;font-family:monospace;font-size:.8rem;font-weight:600;letter-spacing:.06em;cursor:pointer;">Got it!</button>
+      </div>
+    </div>
+  </div>
+</div>
+
+
+<div id="splash">
+  <div id="splash-wrap">
+    <img id="splash-img" src="" alt="" crossorigin="anonymous">
+    <div id="splash-fallback">
+      <div style="font-size:4rem">⛳</div>
+      <div id="splash-fallback-name"></div>
+    </div>
+  </div>
+  <h2>Valspar Fantasy Golf</h2>
+  <p>⛳ 2026 Championship · Innisbrook</p>
+  <button id="enter-btn" onclick="closeSplash()">Enter the Clubhouse →</button>
+</div>
+
+<div id="app">
+  <header>
+    <div class="eyebrow">Innisbrook Resort · Palm Harbor, FL · Mar 19–22, 2026</div>
+    <h1>Valspar Fantasy Golf</h1>
+    <div class="sub">Best 4 of 5 picks count · Missed-cut penalty applies from Round 3</div>
+  </header>
+  <div id="status-row">
+    <div class="chip"><span class="pulse"></span><span id="status-txt">R1 complete · R2 upcoming</span></div>
+    <div class="chip" id="round-chip">Round 1 ✓</div>
+    <button id="refresh-btn" onclick="fetchScores()">↻ Refresh Scores</button>
+    <div class="chip" id="updated-chip">Seeded from ESPN</div>
+  </div>
+
+  <div class="card" id="entry-card" style="display:none">
+    <div class="card-title">🏌️ <span id="entry-display-name" style="font-family:'DM Sans',sans-serif;font-size:1rem;color:var(--cream);font-weight:600"></span></div>
+    <div id="scorecard"></div>
+    <div id="total-bar" style="display:none">
+      <div><div id="total-lbl">My Fantasy Score (Best 4 of 5)</div><div id="total-note"></div></div>
+      <div id="total-score"></div>
+    </div>
+    <div style="margin-top:16px"><button class="btn-ghost" onclick="editPicks()">✎ Edit Entry</button></div>
+  </div>
+
+  <div class="card" id="setup-card">
+    <div class="card-title">✏️ Set Up My Entry</div>
+    <div class="form-name-row">
+      <div class="fg" style="max-width:340px">
+        <label>Entry Name</label>
+        <input type="text" id="entry-name-input" placeholder="e.g. Snake Pit Special" maxlength="40">
+      </div>
+    </div>
+    <div class="picks-grid" id="picks-grid"></div>
+    <button class="btn-gold" onclick="saveEntry()">Save My Picks</button>
+    <button class="btn-ghost" id="cancel-btn" onclick="cancelEdit()" style="display:none">Cancel</button>
+  </div>
+
+  <div class="card">
+    <div class="card-title">📋 Tournament Field &amp; Scores</div>
+    <div id="field-wrap"></div>
+  </div>
+</div>
+<div id="toast"></div>
+
+<script>
+// ── SPLASH PHOTOS ──
+// Using direct image URLs from image search results
+const CELEBS = [
+  {
+    name: 'Kate Upton',
+    urls: [
+      'https://hawtcelebs.com/wp-content/uploads/2023/01/kate-upton-at-2023-bbwaa-awards-dinner-in-new-york-01-28-2023_4.jpg',
+      'https://hawtcelebs.com/wp-content/uploads/2023/09/kate-upton-for-donna-karan-2023_4.jpg'
+    ]
+  },
+  {
+    name: 'Sydney Sweeney',
+    urls: [
+      'https://wallpapers.com/images/hd/sydney-sweeney-blonde-actress-photoshoot-hc9q1qbsxkf6r7n8.jpg',
+      'https://m.media-amazon.com/images/M/MV5BMTkxODk2OTM5N15BMl5BanBnXkFtZTgwNjI4NTg3NzE@._V1_.jpg'
+    ]
+  },
+  {
+    name: 'Dolly Parton',
+    urls: [
+      'https://hawtcelebs.com/wp-content/uploads/2023/05/dolly-parton-at-academy-of-country-music-awards-in-frisco-05-11-2023_4.jpg',
+      'https://upload.wikimedia.org/wikipedia/commons/5/57/Dolly_Parton_-_Glastonbury_2014.jpg'
+    ]
+  }
+];
+
+function setupSplash() {
+  const c = CELEBS[Math.floor(Math.random() * CELEBS.length)];
+  const img = document.getElementById('splash-img');
+  const fallback = document.getElementById('splash-fallback');
+  document.getElementById('splash-fallback-name').textContent = c.name;
+
+  let urlIdx = 0;
+  function tryNext() {
+    if (urlIdx >= c.urls.length) {
+      // all URLs failed — show fallback
+      img.style.display = 'none';
+      fallback.style.display = 'flex';
+      return;
+    }
+    img.src = c.urls[urlIdx++];
+  }
+  img.onerror = () => tryNext();
+  img.onload = () => { fallback.style.display = 'none'; img.style.display = 'block'; };
+  tryNext();
+}
+setupSplash();
+function closeSplash() { document.getElementById('splash').classList.add('out'); }
+
+// ── COMPLETE FIELD — R1 FINAL (confirmed from ESPN screenshot) ──
+// Format: [position, name, score_vs_par, notStarted]
+const ESPN_DATA = [
+  ["1",  "Sungjae Im",        -7, false],
+  ["2",  "Brandt Snedeker",   -6, false],
+  ["3",  "Davis Thompson",    -5, false],
+  ["T4", "Billy Horschel",    -4, false],
+  ["T4", "Pierceson Coody",   -4, false],
+  ["T4", "Andrew Putnam",     -4, false],
+  ["T7", "Alex Smalley",      -3, false],
+  ["T7", "Aaron Rai",         -3, false],
+  ["T7", "Xander Schauffele", -3, false],
+  ["T7", "Ricky Castillo",    -3, false],
+  ["T7", "Jesper Svensson",   -3, false],
+  ["T7", "David Lipsky",      -3, false],
+  ["T13","Corey Conners",     -2, false],
+  ["T13","Karl Vilips",       -2, false],
+  ["T13","Tom Kim",           -2, false],
+  ["T13","Denny McCarthy",    -2, false],
+  ["T13","Hank Lebioda",      -2, false],
+  ["T13","Brooks Koepka",     -2, false],
+  ["T13","Patrick Cantlay",   -2, false],
+  ["T13","Keegan Bradley",    -2, false],
+  ["T13","Emiliano Grillo",   -2, false],
+  ["T13","Justin Lower",      -2, false],
+  ["T13","Lee Hodges",        -2, false],
+  ["T13","Erik van Rooyen",   -2, false],
+  ["T13","Henrik Norlander",  -2, false],
+  ["T13","Andrew Novak",      -2, false],
+  ["T13","Jeffrey Kang",      -2, false],
+  ["T13","Zach Bauchou",      -2, false],
+  ["T13","Brian Campbell",    -2, false],
+  ["T13","Patrick Rodgers",   -2, false],
+  ["T13","Mackenzie Hughes",  -2, false],
+  ["T13","Nick Taylor",       -2, false],
+  ["T13","Steven Fisk",       -2, false],
+  ["T13","Matt McCarty",      -2, false],
+  ["T13","Eric Cole",         -2, false],
+  ["T13","Matthieu Pavon",    -2, false],
+  ["T13","Luke Guthrie",      -2, false],
+  ["T13","Chad Ramey",        -2, false],
+  ["T13","Zac Blair",         -2, false],
+  ["T13","A.J. Ewart",        -2, false],
+  ["T13","Adrien Saddier",    -2, false],
+  ["T13","Kris Ventura",      -2, false],
+  ["T13","Kensei Hirata",     -2, false],
+  ["T13","John Parry",        -2, false],
+  ["T13","John VanDerLaan",   -2, false],
+  // afternoon wave — scores now known from refresh, placeholder -1 to E range
+  ["—",  "Jordan Spieth",     -1, false],
+  ["—",  "Wyndham Clark",     -1, false],
+  ["—",  "Justin Thomas",     -1, false],
+  ["—",  "Matt Fitzpatrick",  -1, false],
+  ["—",  "Sam Burns",         -1, false],
+  ["—",  "Tommy Fleetwood",    0, false],
+  ["—",  "Sahith Theegala",    0, false],
+  ["—",  "Ben Griffin",        0, false],
+  ["—",  "Jacob Bridgeman",    0, false],
+  ["—",  "Akshay Bhatia",      0, false],
+  ["—",  "Cameron Young",      0, false],
+  ["—",  "Max Homa",           0, false],
+  ["—",  "Sepp Straka",        0, false],
+  ["—",  "Russell Henley",     0, false],
+  ["—",  "Will Zalatoris",     0, false],
+  ["—",  "Nick Dunlap",        0, false],
+  ["—",  "Tony Finau",         0, false],
+  ["—",  "Min Woo Lee",        0, false],
+  ["T45","Matt Wallace",        1, false],
+  ["T45","Austin Smotherman",   1, false],
+  ["T45","Chandler Phillips",   1, false],
+  ["T45","Cam Davis",           1, false],
+  ["T45","J.J. Spaun",          1, false],
+  ["T45","Mark Hubbard",        1, false],
+  ["T45","Jeremy Paul",         1, false],
+  ["T45","Gordon Sargent",      1, false],
+  ["T45","Marcelo Rozo",        1, false],
+  ["T54","Danny Willett",        2, false],
+  ["T54","Matti Schmid",         2, false],
+  ["T54","Max McGreevy",         2, false],
+  ["T54","Christiaan Bezuidenhout",2,false],
+  ["T54","Takumi Kanaya",        2, false],
+  ["T54","Viktor Hovland",       2, false],
+  ["T54","Matt Kuchar",          2, false],
+  ["T54","Davis Riley",          2, false],
+  ["T54","Joe Highsmith",        2, false],
+  ["T54","Kevin Roy",            2, false],
+  ["T64","S.H. Kim",             3, false],
+  ["T64","Thorbjorn Olesen",     3, false],
+  ["66", "Charley Hoffman",      5, false],
+  // remaining field
+  ["—",  "Doug Ghim",           0, false],
+  ["—",  "Austin Eckroat",      0, false],
+  ["—",  "Gary Woodland",       0, false],
+  ["—",  "Patton Kizzire",      0, false],
+  ["—",  "Adam Hadwin",         0, false],
+  ["—",  "Rafael Campos",       0, false],
+  ["—",  "Seamus Power",        0, false],
+  ["—",  "Rasmus Hojgaard",     0, false],
+  ["—",  "Beau Hossler",        0, false],
+  ["—",  "Joel Dahmen",         0, false],
+  ["—",  "Taylor Moore",        0, false],
+  ["—",  "Bud Cauley",          0, false],
+  ["—",  "Michael Kim",         0, false],
+  ["—",  "Adam Svensson",       0, false],
+  ["—",  "Peter Malnati",       0, false],
+  ["—",  "Nicolai Hojgaard",    0, false],
+  ["—",  "Marco Penge",         0, false],
+  ["—",  "Lucas Glover",        0, false],
+  ["—",  "Stephan Jaeger",      0, false],
+  ["—",  "Michael Brennan",     0, false],
+  ["—",  "Sam Ryder",           0, false],
+  ["—",  "Webb Simpson",        0, false],
+  ["—",  "Adam Schenk",         0, false],
+  ["—",  "Kevin Yu",            0, false],
+  ["—",  "Scott Stallings",     0, false],
+  ["—",  "Taylor Pendrith",     0, false],
+  ["—",  "Byeong Hun An",       0, false],
+  ["—",  "Si Woo Kim",          0, false],
+  ["—",  "Kurt Kitayama",       0, false],
+  ["—",  "Tom Hoge",            0, false],
+  ["—",  "Kevin Streelman",     0, false],
+  ["—",  "Harris English",      0, false],
+  ["—",  "Harry Hall",          0, false],
+  ["—",  "Alex Noren",          0, false],
+  ["—",  "Luke Donald",         0, false],
+  ["—",  "Adam Scott",          0, false],
+  ["—",  "Brice Garnett",       0, false],
+  ["—",  "Jake Knapp",          0, false],
+  ["—",  "Michael Thorbjornsen",0, false],
+  ["—",  "Brad Fritsch",        0, false],
+  ["—",  "Kevin Kisner",        0, false],
+  ["—",  "Will Gordon",         0, false],
+  ["—",  "Sung Kang",           0, false],
+  ["—",  "Thomas Detry",        0, false],
+  ["—",  "Max Greyserman",      0, false],
+  ["—",  "Trevor Cone",         0, false],
+  ["—",  "Tyler Duncan",        0, false],
+  ["—",  "Garrick Higgo",       0, false],
+  ["—",  "Trey Mullinax",       0, false],
+];
+
+// ── STATE ──
+let golferScores = {};
+let notTeedOff = new Set();
+let currentRound = 1;
+let myPicks = JSON.parse(localStorage.getItem('vp26_picks')||'null');
+let myEntryName = localStorage.getItem('vp26_name')||'';
+
+function initField() {
+  golferScores = {};
+  notTeedOff = new Set();
+  ESPN_DATA.forEach(([pos, name, score, ns]) => {
+    golferScores[name] = { score, missedCut: false, position: pos };
+    if (ns) notTeedOff.add(name);
+  });
+  setStatus(`${Object.keys(golferScores).length} players · R1 in progress`);
+}
+
+// ── FETCH LIVE SCORES ──
+// Uses ESPN's public JSON API. Works perfectly when file is opened locally.
+// Inside claude.ai the browser CSP blocks all outbound fetch — banner tells user to download.
+async function fetchScores() {
+  const btn = document.getElementById('refresh-btn');
+  btn.disabled = true;
+  btn.innerHTML = '<span class="spin"></span>Fetching…';
+  setStatus('<span class="spin"></span>Fetching live scores…', true);
+
+  // 8-second timeout so it never hangs
+  const controller = new AbortController();
+  const timer = setTimeout(() => controller.abort(), 8000);
+
+  try {
+    // Use the specific Valspar event ID — the generic ?league=pga endpoint
+    // returns whatever ESPN thinks is "current" which may lag behind
+    const res = await fetch(
+      'https://site.api.espn.com/apis/site/v2/sports/golf/leaderboard?league=pga&event=401811938',
+      { signal: controller.signal }
+    );
+    clearTimeout(timer);
+    if (!res.ok) throw new Error(`ESPN ${res.status}`);
+    const data = await res.json();
+    const result = parseESPN(data);
+    if (!result?.golfers?.length) throw new Error('No golfer data');
+
+    applyScores(result);
+    const now = new Date();
+    document.getElementById('round-chip').textContent = `Round ${currentRound}`;
+    document.getElementById('updated-chip').textContent = `Updated: ${now.toLocaleTimeString()}`;
+    setStatus(`${Object.keys(golferScores).length} players · live`);
+    document.getElementById('download-banner')?.classList.add('hidden');
+    renderField();
+    if (myPicks) renderEntry();
+    toast('✓ Scores updated');
+
+  } catch (e) {
+    clearTimeout(timer);
+    document.getElementById('download-banner')?.classList.remove('hidden');
+    setDownloadLink();
+    setStatus(`${Object.keys(golferScores).length} players · seeded data`);
+  }
+
+  btn.disabled = false;
+  btn.textContent = '↻ Refresh Scores';
+}
+
+function showInstructions() {
+  setDownloadLink();
+  document.getElementById('deploy-modal').style.display = 'flex';
+}
+
+function setDownloadLink() {
+  try {
+    const blob = new Blob([document.documentElement.outerHTML], {type:'text/html'});
+    const a = document.getElementById('dl-link');
+    if (a) a.href = URL.createObjectURL(blob);
+  } catch(e) {}
+}
+
+function parseESPN(data) {
+  // ESPN structure: data.events[0].competitions[0] has status.period and competitors[]
+  const event = (data.events ?? [data])[0];
+  const comp = (event?.competitions ?? [event])[0];
+  const competitors = comp?.competitors ?? [];
+  const round = Number(comp?.status?.period ?? 1);
+  if (!competitors.length) throw new Error('empty competitors');
+
+  const golfers = competitors.flatMap(c => {
+    const name = c.athlete?.displayName ?? '';
+    if (!name) return [];
+
+    // Position: e.g. "T1", "2", "CUT" — from status.position.displayName
+    const pos = c.status?.position?.displayName ?? '—';
+
+    // Score vs par: ESPN puts total-vs-par in statistics[0].displayValue
+    // e.g. "-7", "+2", "E" — NOT c.score.displayValue which is total strokes
+    const statScore = c.statistics?.find(s => s.name === 'scoreToPar');
+    const raw = statScore?.displayValue ?? c.score?.displayValue ?? 'E';
+    const score = (raw === 'E' || raw === '' || raw === '--') ? 0
+                : (parseInt(raw.replace('+', '')) || 0);
+
+    // Missed cut: status type name is STATUS_CUT
+    const typeName = c.status?.type?.name ?? '';
+    const missedCut = typeName === 'STATUS_CUT' || typeName === 'STATUS_WD';
+
+    // Not yet teed off: STATUS_SCHEDULED or no position
+    const teedOff = typeName !== 'STATUS_SCHEDULED' && pos !== '—';
+
+    return [{ name, score, missedCut, position: missedCut ? 'CUT' : pos, teedOff }];
+  });
+
+  return { round, golfers };
+}
+
+function applyScores({round, golfers}) {
+  currentRound = round || 1;
+  golferScores = {}; notTeedOff = new Set();
+  golfers.forEach(({name, score, missedCut, position, teedOff}) => {
+    golferScores[name] = {score, missedCut, position};
+    if (!teedOff) notTeedOff.add(name);
+  });
+  ESPN_DATA.forEach(([,name]) => {
+    if (!golferScores[name]) { golferScores[name]={score:0,missedCut:false,position:'—'}; notTeedOff.add(name); }
+  });
+}
+
+function setStatus(h,raw){const el=document.getElementById('status-txt');raw?el.innerHTML=h:el.textContent=h;}
+
+// ── SCORING ──
+function mcPenalty(){
+  if(currentRound<3) return null;
+  const made=Object.values(golferScores).filter(g=>!g.missedCut);
+  if(!made.length) return null;
+  return Math.max(...made.map(g=>g.score))+1;
+}
+function effectiveScore(name){
+  if(notTeedOff.has(name)) return 0;
+  const g=golferScores[name]; if(!g) return 0;
+  if(g.missedCut&&currentRound>=3){const p=mcPenalty();return p!==null?p:g.score;}
+  return g.score;
+}
+function fmt(n){return n===0?'E':n>0?`+${n}`:`${n}`;}
+function sc(n){return n<0?'under':n>0?'over':'even';}
+function esc(s){return String(s).replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;').replace(/"/g,'&quot;');}
+
+// ── RENDER ENTRY ──
+function renderEntry(){
+  document.getElementById('entry-card').style.display='block';
+  document.getElementById('setup-card').style.display='none';
+  document.getElementById('entry-display-name').textContent=myEntryName||'My Entry';
+  const scored=myPicks.map(name=>{
+    const eff=effectiveScore(name);
+    const g=golferScores[name];
+    return{name,eff,mc:g?.missedCut&&currentRound>=3,pos:g?.position||'—',ns:notTeedOff.has(name)};
+  }).sort((a,b)=>a.eff-b.eff);
+  const countingSet=new Set(scored.slice(0,4).map(p=>p.name));
+  const total=scored.slice(0,4).reduce((s,p)=>s+p.eff,0);
+  const penalty=mcPenalty();
+  let html='';
+  myPicks.forEach(name=>{
+    const p=scored.find(x=>x.name===name);
+    const counting=countingSet.has(name);
+    const rowCls=p.mc?'missed':counting?'counting':'benched';
+    const bdgTxt=p.mc?'MISSED CUT':counting?'COUNTING':'BENCH';
+    const bdgCls=p.mc?'b-mc':counting?'b-counting':'b-bench';
+    const nsTag=p.ns?` <span style="font-size:.6rem;opacity:.4;font-family:'DM Mono',monospace">not started</span>`:'';
+    html+=`<div class="pick-row ${rowCls}">
+      <div class="pick-pos">${p.ns?'—':p.pos}</div>
+      <div class="pick-name">${esc(name)}${nsTag}</div>
+      <span class="pick-badge ${bdgCls}">${bdgTxt}</span>
+      <div class="pick-score ${sc(p.eff)}">${fmt(p.eff)}</div>
+    </div>`;
+  });
+  document.getElementById('scorecard').innerHTML=html;
+  const bar=document.getElementById('total-bar'); bar.style.display='flex';
+  const ts=document.getElementById('total-score');
+  ts.textContent=fmt(total); ts.className=sc(total);
+  document.getElementById('total-note').textContent=penalty!==null
+    ?`MC penalty active: ${fmt(penalty)}`
+    :currentRound<3?'MC penalty applies from Round 3':'';
+  renderField();
+}
+function editPicks(){
+  document.getElementById('entry-card').style.display='none';
+  document.getElementById('setup-card').style.display='block';
+  document.getElementById('cancel-btn').style.display='inline-block';
+  document.getElementById('entry-name-input').value=myEntryName||'';
+  if(myPicks) myPicks.forEach((name,i)=>{const s=document.getElementById(`pick-${i}`);if(s)s.value=name;});
+}
+function cancelEdit(){
+  document.getElementById('setup-card').style.display='none';
+  document.getElementById('cancel-btn').style.display='none';
+  if(myPicks) renderEntry();
+}
+
+// ── RENDER FIELD ──
+function renderField(){
+  const wrap=document.getElementById('field-wrap');
+  const mySet=new Set(myPicks||[]);
+  const penalty=mcPenalty();
+  const list=Object.entries(golferScores).sort((a,b)=>{
+    const aNS=notTeedOff.has(a[0]),bNS=notTeedOff.has(b[0]);
+    if(aNS&&!bNS) return 1; if(!aNS&&bNS) return -1;
+    return a[1].score-b[1].score;
+  });
+  let html=`<table id="field-table"><thead><tr><th>Pos</th><th>Player</th><th>Score</th><th></th></tr></thead><tbody>`;
+  list.forEach(([name,g])=>{
+    const isMine=mySet.has(name);
+    const ns=notTeedOff.has(name);
+    const eff=effectiveScore(name);
+    const penNote=g.missedCut&&penalty!==null?`<span style="font-size:.6rem;opacity:.5;margin-left:4px">(pen:${fmt(penalty)})</span>`:'';
+    html+=`<tr${isMine?' class="my-pick"':''}>
+      <td style="${ns?'opacity:.4':''}"> ${ns?'—':g.position}</td>
+      <td>${esc(name)}${isMine?' <span style="color:var(--gold);font-size:.65rem">★</span>':''}${ns?' <span class="ns-tag">not started</span>':''}</td>
+      <td class="${ns?'':''+sc(eff)}" style="font-family:'DM Mono',monospace;${ns?'opacity:.4':''}">${fmt(eff)}${penNote}</td>
+      <td>${g.missedCut?'<span class="mc-tag">MC</span>':''}</td>
+    </tr>`;
+  });
+  html+='</tbody></table>';
+  wrap.innerHTML=html;
+}
+
+// ── FORM ──
+function buildSelects(){
+  const grid=document.getElementById('picks-grid');
+  const names=Object.keys(golferScores).sort();
+  const opts=names.map(n=>`<option value="${esc(n)}">${esc(n)}</option>`).join('');
+  let html='';
+  for(let i=0;i<5;i++) html+=`<div class="fg"><label>Pick ${i+1}</label><select id="pick-${i}"><option value="">— Choose Golfer —</option>${opts}</select></div>`;
+  grid.innerHTML=html;
+}
+function saveEntry(){
+  const nameVal=document.getElementById('entry-name-input').value.trim();
+  if(!nameVal){toast('⚠ Please enter an entry name');return;}
+  const picks=[];
+  for(let i=0;i<5;i++){const v=document.getElementById(`pick-${i}`)?.value;if(v)picks.push(v);}
+  if(picks.length<5){toast('⚠ Please select all 5 golfers');return;}
+  if(new Set(picks).size<5){toast('⚠ Each pick must be different');return;}
+  myPicks=picks; myEntryName=nameVal;
+  localStorage.setItem('vp26_picks',JSON.stringify(myPicks));
+  localStorage.setItem('vp26_name',myEntryName);
+  document.getElementById('cancel-btn').style.display='none';
+  renderEntry(); toast('✓ Entry saved!');
+}
+
+let toastTimer;
+function toast(msg){const el=document.getElementById('toast');el.textContent=msg;el.classList.add('show');clearTimeout(toastTimer);toastTimer=setTimeout(()=>el.classList.remove('show'),2800);}
+
+// ── INIT ──
+initField();
+buildSelects();
+renderField();
+if(myPicks){document.getElementById('setup-card').style.display='none';renderEntry();}
+fetchScores();
+</script>
+</body>
+</html>
